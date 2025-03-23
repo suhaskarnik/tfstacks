@@ -8,22 +8,12 @@ locals {
 			cidr_block = cidrsubnet(var.vpc.base_cidr_block,4, subnet.number)
 
 			name = join("_", [
-				aws_vpc.main.tags.Name,
+				"sn", aws_vpc.main.tags.Name,
 				substr(key,0,1),
 				( subnet.public ? "pub" : "pvt" )
 			])
 		}
 	]
-
-
-	# public_subnets = [
-	# 	for each in local.subnets : each if each.subnet_public == true
-	# ]
-	#
-	# private_subnets = [
-	# 	for each in local.network_subnets : each if each.subnet_public == false
-	# ]
-
 }
 
 resource "aws_vpc" "main" {
@@ -45,11 +35,12 @@ resource "aws_subnet" "main" {
 	vpc_id = aws_vpc.main.id
 	availability_zone = "us-east-1${substr(each.value.key,0,1)}"
 	cidr_block = each.value.cidr_block
-
+	
+	map_public_ip_on_launch = each.value.public ? true : false
 	
 	tags = merge(var.proj_tags,
 		{
-			Name = each.value.name  #"${each.value.vpc_id}_${each.value.subnet_key}_${each.value.subnet_public ? "pub" : "pvt" }"
+			Name = each.value.name  
 			Public = each.value.public
 		}
 	)
