@@ -63,18 +63,6 @@ resource "aws_network_acl_association" "private" {
 	network_acl_id = aws_network_acl.private.id
 	subnet_id = each.value.id
 }
-# locals {
-# 	public_nacl_subnet = [
-# 		for pair in setproduct(local.public_subnets, aws_network_acl.public) : {
-# 			
-# 		}
-# 	] 
-# }
-#
-#
-# resource "aws_network_acl_association" "public" {	
-#
-# }
-#
-#
-#
+
+
+
